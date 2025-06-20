@@ -1,59 +1,46 @@
+import { Product } from "../models/Product";
 import { Request, Response } from "express";
-import { Order } from "../models/Order";
 
-export const createOrder = async (req: Request, res: Response) => {
+
+
+export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { user, subtotal, total } = req.body;
+    const { name, description, quantity, price } = req.body;
 
-    const newOrder = new Order({
-      user,
-      subtotal,
-      total
-    });
-
-    const savedOrder = await newOrder.save();
-    return res.status(201).json(savedOrder);
-  } catch (err) {
-    return res.status(500).json({ message: 'Error al crear la orden', error: err });
+    const newProduct = new Product({ name, description, quantity, price });
+    const savedProduct = await newProduct.save();
+    res.json({ product: savedProduct });
+  } catch (error) {
+    res.status(500).json({ error });
   }
 };
 
-export const updateOrderToPaid = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    const updatedOrder = await Order.findByIdAndUpdate(
-      id,
-      { status: 'pagado' },
-      { new: true }
-    );
-
-    if (!updatedOrder) {
-      return res.status(404).json({ message: 'Orden no encontrada' });
-    }
-
-    return res.json(updatedOrder);
-  } catch (err) {
-    return res.status(500).json({ message: 'Error al actualizar la orden', error: err });
-  }
+export const getProducts = async (_req: Request, res: Response) => {
+  const products = await Product.find();
+  res.json({ products });
 };
 
-export const cancelOrder = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
+export const updateProduct = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, description, quantity, price } = req.body;
 
-    const canceledOrder = await Order.findByIdAndUpdate(
-      id,
-      { status: 'cancelado' },
-      { new: true }
-    );
+  const updated = await Product.findByIdAndUpdate(
+    id,
+    { name, description, quantity, price },
+    { new: true }
+  );
 
-    if (!canceledOrder) {
-      return res.status(404).json({ message: 'Orden no encontrada' });
-    }
+  res.json({ product: updated });
+};
 
-    return res.json(canceledOrder);
-  } catch (err) {
-    return res.status(500).json({ message: 'Error al cancelar la orden', error: err });
-  }
+export const deleteProduct = async (req: Request, res: Response) => {
+  const { id } = req.params;
+//req.params tengo que enviarlo desde la ruta 
+  const deleted = await Product.findByIdAndUpdate(
+    id,
+    { status: false, deleteDate: new Date() },
+    { new: true }
+  );
+
+  res.json({ product: deleted });
 };

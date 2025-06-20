@@ -79,6 +79,32 @@ export const getUserByUsername = async (req: Request, res: Response) => {
     return res.json({ user });
 };
 
+export const deleteUser = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const deletedUser = await User.findByIdAndUpdate(
+            id,
+            { status: false, deleteDate: new Date() },
+            { new: true }
+        );
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        return res.json({
+            message: "Usuario eliminado (lógicamente)",
+            user: deletedUser
+        });
+    } catch (error) {
+        console.error("Error al eliminar usuario:", error);
+        return res.status(500).json({ message: "Error al eliminar el usuario" });
+    }
+};
+
+
+
 export const createUser = async (req: Request, res: Response) => {
     try {
         const { username, password, email, role } = req.body;

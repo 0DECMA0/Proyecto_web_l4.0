@@ -1,39 +1,20 @@
-import {Document, model, Schema, Types} from "mongoose";
+import { Document, model, Schema, Types } from 'mongoose';
 
-export interface IOrder extends Document{
+export interface IOrder extends Document {
     _id: Types.ObjectId;
-    idUser: Types.ObjectId;
+    user: string;         
+    subtotal: number;
+    total: number;
     createDate: Date;
-    status: string;
-    updateDate: Date;
+    status: 'pendiente' | 'pagado' | 'cancelado';
 }
 
 const orderSchema = new Schema<IOrder>({
-    idUser: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    createDate: {
-        type: Date,
-        default: Date.now
-    },
-    status: {
-        type: String,
-        required: true,
-        enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-        default: 'pending'
-    },
-    updateDate: {
-        type: Date,
-        default: Date.now
-    }
-});
-
-// Middleware para actualizar updateDate antes de guardar
-orderSchema.pre('save', function(next) {
-    this.updateDate = new Date();
-    next();
+    user: { type: String, required: true },   
+    subtotal: { type: Number, required: true },
+    total: { type: Number, required: true },
+    createDate: { type: Date, default: Date.now },
+    status: { type: String, enum: ['pendiente', 'pagado', 'cancelado'], default: 'pendiente' }
 });
 
 export const Order = model<IOrder>('Order', orderSchema, 'order');

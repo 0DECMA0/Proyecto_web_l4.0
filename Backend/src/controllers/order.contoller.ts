@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Order } from "../models/Order";
 
+//
 export const createOrder = async (req: Request, res: Response) => {
   try {
     const { user, subtotal, total } = req.body;
@@ -56,4 +57,9 @@ export const cancelOrder = async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(500).json({ message: 'Error al cancelar la orden', error: err });
   }
+
 };
+export const getOrder= async(req: Request, res: Response) => {
+  const orders = await Order.find();
+  return res.status(200).json(orders);
+}

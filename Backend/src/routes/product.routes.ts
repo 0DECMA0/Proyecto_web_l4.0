@@ -1,4 +1,4 @@
-import { createProduct, getProducts, updateProduct, deleteProduct } from "../controllers/product.controller";
+import { createProduct, getProducts, updateProduct, deleteProduct } from "../controllers/product.contoller";
 import express from 'express'
 const router = express.Router();
 
